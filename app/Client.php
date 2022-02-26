@@ -70,7 +70,7 @@ class Client
             ->withToken($this->getToken())
             ->attach('certificate', $cert, 'certificate.crt')
             ->attach('certificate_key', $key, 'certificate.key')
-            ->post("/api/nginx/certificates/{$certificate->id}/upload");
+            ->post("/api/nginx/certificates/$certificate->id/upload");
 
         return $certificate;
     }

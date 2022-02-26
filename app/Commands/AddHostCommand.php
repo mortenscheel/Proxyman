@@ -40,11 +40,9 @@ class AddHostCommand extends Command
             $client->createHost($domains, $host, $port, $https);
         } catch (Throwable $e) {
             $this->error($e->getMessage());
-
             return self::FAILURE;
         }
         $this->info('Host created');
-
         return self::SUCCESS;
     }
 }

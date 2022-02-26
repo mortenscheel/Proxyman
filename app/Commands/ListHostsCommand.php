@@ -30,12 +30,13 @@ class ListHostsCommand extends Command
     public function handle(Client $client)
     {
         $hosts = $client->getHosts();
-        $this->table(['Domains', 'Host', 'Port', 'SSL'], $hosts->map(function(Host $host) {
+        $this->table(['Domains', 'Host', 'Port', 'SSL', 'Enabled'], $hosts->map(function(Host $host) {
             return [
                 $host->domains->join(' '),
                 $host->host,
                 $host->port,
                 $host->certificate ? '<fg=green>✓</>' : '<fg=red>✗</>',
+                $host->enabled ? '<fg=green>✓</>' : '<fg=red>✗</>',
             ];
         }));
 
