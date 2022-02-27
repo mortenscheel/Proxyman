@@ -9,6 +9,8 @@ class Certificate
 {
     public ?int $id = null;
     public string $name;
+    public string $key;
+    public string $cert;
     public Carbon $expires_at;
 
     public function __construct(array $data)
@@ -16,6 +18,8 @@ class Certificate
         $this->id = Arr::get($data, 'id');
         $this->name = Arr::get($data, 'nice_name');
         $this->expires_at = Carbon::make(Arr::get($data, 'expires_on'));
+        $this->key = Arr::get($data, 'meta.certificate_key');
+        $this->cert = Arr::get($data, 'meta.certificate');
     }
 
     public function getExpiryLabel(): string

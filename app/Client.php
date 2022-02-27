@@ -33,6 +33,9 @@ class Client
             ])->collect()->mapInto(Host::class);
     }
 
+    /**
+     * @return \Illuminate\Support\Collection<int, \App\Certificate>
+     */
     public function getCertificates()
     {
         return Http::withOptions($this->options)

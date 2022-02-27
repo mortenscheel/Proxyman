@@ -13,7 +13,7 @@ class ListCertificatesCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'certs:list';
+    protected $signature = 'cert:list';
 
     /**
      * The description of the command.
