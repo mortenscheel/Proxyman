@@ -24,22 +24,23 @@ class ListHostsCommand extends Command
 
     /**
      * Execute the console command.
-     *
+     * @param \App\Client $client
      * @return int
      */
-    public function handle(Client $client)
+    public function handle(Client $client): int
     {
         $hosts = $client->getHosts();
-        $this->table(['Domains', 'Host', 'Port', 'SSL', 'Enabled'], $hosts->map(function(Host $host) {
-            return [
+        if ($hosts->isEmpty()) {
+            $this->info('No hosts found');
+        } else {
+            $this->table(['Domains', 'Host', 'Port', 'SSL', 'Enabled'], $hosts->map(fn(Host $host) => [
                 $host->domains->join(' '),
                 $host->host,
                 $host->port,
                 $host->certificate ? '<fg=green>✓</>' : '<fg=red>✗</>',
                 $host->enabled ? '<fg=green>✓</>' : '<fg=red>✗</>',
-            ];
-        }));
-
+            ]));
+        }
         return self::SUCCESS;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 use Symfony\Component\Process\Process;
@@ -24,11 +25,9 @@ class Client
     /**
      * @return \Illuminate\Support\Collection<int, \App\Host>
      */
-    public function getHosts()
+    public function getHosts(): Collection
     {
-        return Http::withOptions($this->options)
-            ->withToken($this->getToken())
-            ->get('/api/nginx/proxy-hosts', [
+        return Http::withOptions($this->options)->withToken($this->getToken())->get('/api/nginx/proxy-hosts', [
                 'expand' => 'owner,access_list,certificate',
             ])->collect()->mapInto(Host::class);
     }
@@ -36,19 +35,18 @@ class Client
     /**
      * @return \Illuminate\Support\Collection<int, \App\Certificate>
      */
-    public function getCertificates()
+    public function getCertificates(): Collection
     {
         return Http::withOptions($this->options)
             ->withToken($this->getToken())
             ->get('/api/nginx/certificates')
-            ->collect()->mapInto(Certificate::class);
+            ->collect()
+            ->mapInto(Certificate::class);
     }
 
     private function createCertificate(string $name, array $domains): Certificate
     {
-        $response = Http::withOptions($this->options)
-            ->withToken($this->getToken())
-            ->post('/api/nginx/certificates', [
+        $response = Http::withOptions($this->options)->withToken($this->getToken())->post('/api/nginx/certificates', [
                 'nice_name' => $name,
                 'provider'  => 'other',
             ]);
@@ -78,7 +76,8 @@ class Client
         return $certificate;
     }
 
-    public function domainExists(string $domain)
+    /** @noinspection PhpUnused */
+    public function domainExists(string $domain): bool
     {
         return $this->getHosts()->first(fn(Host $host) => in_array($domain, $host->domains, true)) !== null;
     }
@@ -142,10 +141,9 @@ class Client
             $email = config('proxy.email');
             $password = config('proxy.password');
             if (!$host || !$email || !$password) {
-                throw new RuntimeException('Proxy manager environment variables missing');
+                throw new RuntimeException('Proxy manager environment variables missing (check PROXY_MANAGER_HOST, PROXY_MANAGER_EMAIL and PROXY_MANAGER_PASSWORD)');
             }
-            $response = Http::withOptions($this->options)
-                ->post('/api/tokens', [
+            $response = Http::withOptions($this->options)->post('/api/tokens', [
                     'identity' => $email,
                     'secret'   => $password,
                 ]);

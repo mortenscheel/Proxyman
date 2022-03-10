@@ -10,29 +10,31 @@ class ListCertificatesCommand extends Command
 {
     /**
      * The signature of the command.
-     *
      * @var string
      */
     protected $signature = 'cert:list';
 
     /**
      * The description of the command.
-     *
      * @var string
      */
     protected $description = 'List certificates';
 
     /**
      * Execute the console command.
-     *
      * @return int
      */
     public function handle(Client $client)
     {
         $certificates = $client->getCertificates();
-        $this->table(['Name', 'Expires on'], $certificates->map(function(Certificate $certificate) {
-            return [$certificate->name, $certificate->getExpiryLabel()];
-        }));
+        if ($certificates->isEmpty()) {
+            $this->info('No certificates found');
+        } else {
+            $this->table(['Name', 'Expires on'], $certificates->map(fn(Certificate $certificate) => [
+                $certificate->name,
+                $certificate->getExpiryLabel()
+            ]));
+        }
         return self::SUCCESS;
     }
 }
