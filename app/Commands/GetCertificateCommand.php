@@ -14,7 +14,7 @@ class GetCertificateCommand extends Command
      * @var string
      */
     protected $signature = 'cert:get {name?   : Name of certificate (optional)}
-                                      {--write : Wirte certificate files to disk (current folder)}';
+                                     {--write : Write certificate files to disk (current folder)}';
 
     /**
      * The description of the command.
