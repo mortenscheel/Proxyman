@@ -8,6 +8,11 @@ I've written it for my own use cases, but feature requests and pull-requests are
 - [mkcert](https://github.com/FiloSottile/mkcert) (for generating self-signed certificates)
 
 # Installation
+## Composer
+```bash
+composer global require mortenscheel/nginx-proxyman
+```
+## Manual
 Download binary from latest release and place it in PATH
 
 # Usage

@@ -1,5 +1,5 @@
 {
-    "name": "mortenscheel/proxyman",
+    "name": "mortenscheel/nginx-proxyman",
     "description": "CLI tool for nginx-proxy-manager",
     "keywords": ["nginx-proxy", "cli"],
     "license": "MIT",
