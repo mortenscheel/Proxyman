@@ -39,7 +39,7 @@ $ proxyman hosts:add [options] <domains>
 
 ## List self-signed certificates
 ```bash
-$ proxyman certs:list
+$ proxyman cert:list
 +------------------------+---------------------------------------------------+
 | Name                   | Expires on                                        |
 +------------------------+---------------------------------------------------+
@@ -49,6 +49,6 @@ $ proxyman certs:list
 ```
 ## Get self-signed certificate
 ```bash
-$ proxyman certs:get <name> [--write]
+$ proxyman cert:get <name> [--write]
 ```
 Writes the key and crt to stdout, or writes them to files in the current directory
