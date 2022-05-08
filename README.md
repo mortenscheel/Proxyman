@@ -1,3 +1,4 @@
+![Screenshot](screenshot.png)
 Proxyman is a simple cli tool for [nginx-proxy-manager](https://github.com/NginxProxyManager/nginx-proxy-manager)
 
 I've written it for my own use cases, but feature requests and pull-requests are welcome.
