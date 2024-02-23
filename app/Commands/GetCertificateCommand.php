@@ -30,27 +30,28 @@ class GetCertificateCommand extends Command
      */
     public function handle(Client $client)
     {
-        $certificates = $client->getCertificates()->mapWithKeys(fn(Certificate $cert) => [$cert->name => $cert]);
+        $certificates = $client->getCertificates()->mapWithKeys(fn (Certificate $cert) => [$cert->name => $cert]);
         $name = $this->argument('name');
-        if (!$name) {
+        if (! $name || ! \is_string($name)) {
             $name = $this->choice('Select certificates', $certificates->keys()->toArray());
         }
+        /** @var string $name */
         $certificate = $certificates->get($name);
-        if (!$certificate) {
-            $this->error("Certificate not found");
+        if (! $certificate) {
+            $this->error('Certificate not found');
+
             return self::FAILURE;
         }
         if ($this->option('write')) {
-            file_put_contents(getcwd() . "/$certificate->name.key", $certificate->key);
-            file_put_contents(getcwd() . "/$certificate->name.crt", $certificate->cert);
+            file_put_contents(getcwd()."/$certificate->name.key", $certificate->key);
+            file_put_contents(getcwd()."/$certificate->name.crt", $certificate->cert);
             $this->info("$certificate->name.key and $certificate->name.crt saved in current folder.");
-        }
-        else {
+        } else {
             $this->getOutput()->writeln([
                 "<fg=yellow>$certificate->name.key</>",
                 "<fg=white>$certificate->key</>",
                 "<fg=yellow>$certificate->name.crt</>",
-                "<fg=white>$certificate->cert</>"
+                "<fg=white>$certificate->cert</>",
             ]);
         }
 

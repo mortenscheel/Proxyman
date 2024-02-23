@@ -34,15 +34,17 @@ class AddHostCommand extends Command
     {
         $domains = $this->argument('domains');
         $host = $this->option('host');
-        $port = $this->option('port');
+        $port = (int) $this->option('port');
         $https = $this->option('https');
         try {
             $client->createHost($domains, $host, $port, $https);
         } catch (Throwable $e) {
             $this->error($e->getMessage());
+
             return self::FAILURE;
         }
         $this->info('Host created');
+
         return self::SUCCESS;
     }
 }

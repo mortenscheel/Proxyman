@@ -24,8 +24,6 @@ class ListHostsCommand extends Command
 
     /**
      * Execute the console command.
-     * @param \App\Client $client
-     * @return int
      */
     public function handle(Client $client): int
     {
@@ -33,7 +31,7 @@ class ListHostsCommand extends Command
         if ($hosts->isEmpty()) {
             $this->info('No hosts found');
         } else {
-            $this->table(['Domains', 'Host', 'Port', 'SSL', 'Enabled'], $hosts->map(fn(Host $host) => [
+            $this->table(['Domains', 'Host', 'Port', 'SSL', 'Enabled'], $hosts->map(fn (Host $host) => [
                 $host->domains->join(' '),
                 $host->host,
                 $host->port,
@@ -41,6 +39,7 @@ class ListHostsCommand extends Command
                 $host->enabled ? '<fg=green>✓</>' : '<fg=red>✗</>',
             ]));
         }
+
         return self::SUCCESS;
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 use Symfony\Component\Process\Process;
+
 use function in_array;
 
 class Client
@@ -28,8 +29,8 @@ class Client
     public function getHosts(): Collection
     {
         return Http::withOptions($this->options)->withToken($this->getToken())->get('/api/nginx/proxy-hosts', [
-                'expand' => 'owner,access_list,certificate',
-            ])->collect()->mapInto(Host::class);
+            'expand' => 'owner,access_list,certificate',
+        ])->collect()->mapInto(Host::class);
     }
 
     /**
@@ -47,12 +48,12 @@ class Client
     private function createCertificate(string $name, array $domains): Certificate
     {
         $response = Http::withOptions($this->options)->withToken($this->getToken())->post('/api/nginx/certificates', [
-                'nice_name' => $name,
-                'provider'  => 'other',
-            ]);
+            'nice_name' => $name,
+            'provider'  => 'other',
+        ]);
         $certificate = new Certificate($response->json());
-        $key_path = tempnam(sys_get_temp_dir(), 'cert-key-');
-        $cert_path = tempnam(sys_get_temp_dir(), 'cert-');
+        $key_path = (string) tempnam(sys_get_temp_dir(), 'cert-key-');
+        $cert_path = (string) tempnam(sys_get_temp_dir(), 'cert-');
         $process = new Process([
             'mkcert',
             '-cert-file',
@@ -62,11 +63,11 @@ class Client
             ...$domains,
         ]);
         $process->run();
-        if (!$process->isSuccessful()) {
-            throw new RuntimeException("Unable to create certificate files: " . $process->getErrorOutput());
+        if (! $process->isSuccessful()) {
+            throw new RuntimeException('Unable to create certificate files: '.$process->getErrorOutput());
         }
-        $key = file_get_contents($key_path);
-        $cert = file_get_contents($cert_path);
+        $key = (string) file_get_contents($key_path);
+        $cert = (string) file_get_contents($cert_path);
         Http::withOptions($this->options)
             ->withToken($this->getToken())
             ->attach('certificate', $cert, 'certificate.crt')
@@ -79,20 +80,15 @@ class Client
     /** @noinspection PhpUnused */
     public function domainExists(string $domain): bool
     {
-        return $this->getHosts()->first(fn(Host $host) => in_array($domain, $host->domains, true)) !== null;
+        return $this->getHosts()->first(fn (Host $host) => $host->domains->contains($domain)) !== null;
     }
 
     /**
-     * @param array $domains
-     * @param string $host
-     * @param int $port
-     * @param bool $https
-     * @return \App\Host
      * @throws \Exception
      */
     public function createHost(array $domains, string $host, int $port, bool $https): Host
     {
-        $existing_domains = $this->getHosts()->flatMap(fn(Host $host) => $host->domains)->toArray();
+        $existing_domains = $this->getHosts()->flatMap(fn (Host $host) => $host->domains)->toArray();
         foreach ($domains as $domain) {
             if (in_array($domain, $existing_domains, true)) {
                 throw new RuntimeException("A host with the domain $domain already exists");
@@ -112,12 +108,12 @@ class Client
                 'letsencrypt_agree' => false,
                 'dns_challenge'     => false,
             ],
-            'advanced_config'         => '',
-            'locations'               => [],
-            'block_exploits'          => false,
-            'caching_enabled'         => false,
-            'hsts_enabled'            => false,
-            'hsts_subdomains'         => false,
+            'advanced_config' => '',
+            'locations'       => [],
+            'block_exploits'  => false,
+            'caching_enabled' => false,
+            'hsts_enabled'    => false,
+            'hsts_subdomains' => false,
         ];
         if ($https) {
             $cert_name = collect($domains)->join('--');
@@ -136,21 +132,20 @@ class Client
 
     private function getToken(): string
     {
-        if (!$this->token) {
+        if (! $this->token) {
             $host = config('proxy.host');
             $email = config('proxy.email');
             $password = config('proxy.password');
-            if (!$host || !$email || !$password) {
+            if (! $host || ! $email || ! $password) {
                 throw new RuntimeException('Proxy manager environment variables missing (check PROXY_MANAGER_HOST, PROXY_MANAGER_EMAIL and PROXY_MANAGER_PASSWORD)');
             }
             $response = Http::withOptions($this->options)->post('/api/tokens', [
-                    'identity' => $email,
-                    'secret'   => $password,
-                ]);
+                'identity' => $email,
+                'secret'   => $password,
+            ]);
             $this->token = $response->json('token');
         }
 
         return $this->token;
     }
-
 }

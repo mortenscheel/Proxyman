@@ -8,9 +8,13 @@ use Illuminate\Support\Arr;
 class Certificate
 {
     public ?int $id = null;
+
     public string $name;
+
     public ?string $key;
+
     public ?string $cert;
+
     public Carbon $expires_at;
 
     public function __construct(array $data)

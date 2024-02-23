@@ -1,0 +1,10 @@
+grumphp:
+  extensions:
+    - YieldStudio\GrumPHPLaravelPint\ExtensionLoader
+  tasks:
+    laravel_pint: null
+    composer_normalize: null
+    phpstan:
+      memory_limit: '-1'
+      use_grumphp_paths: false
+    pest: null
